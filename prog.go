@@ -612,6 +612,13 @@ func resolveBTFType(name string, progType ProgramType, attachType AttachType) (b
 
 	target := match{progType, attachType}
 	switch target {
+	case match{LSM, AttachLSMMac}:
+		var target btf.Func
+		if err := findKernelType("bpf_lsm"+name, &target); err != nil {
+			return nil, fmt.Errorf("can't resolve BTF for LSM hook %s: %w", name, err)
+		}
+
+		return &target, nil
 	case match{Tracing, AttachTraceIter}:
 		var target btf.Func
 		if err := findKernelType("bpf_iter_"+name, &target); err != nil {
